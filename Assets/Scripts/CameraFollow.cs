@@ -1,54 +1,43 @@
 using UnityEngine;
 
-public class CameraFollow : MonoBehaviour
-{/*
-    public Transform target; // ГГ, за яким буде слідкувати камера
-    public float smoothSpeed = 0.125f; // Плавність руху камери
-    public Vector3 offset; // Відстань між камерою і цільовим об'єктом
-    public Vector3 rotationOffset; // Значення для орієнтації (rotation) камери
+public class CameraFollowMouse : MonoBehaviour
+{
+    public float mouseSensitivity = 100f; // Чутливість миші
+    public float minYAngle = -80f; // Мінімальний кут обертання камери
+    public float maxYAngle = 80f; // Максимальний кут обертання камери
+    public float minXAngle = -80f; // Мінімальний кут обертання камери
+    public float maxXAngle = 80f; // Максимальний кут обертання камери
 
-    void LateUpdate()
-    {
-        Vector3 desiredPosition = target.position + offset;
-        Vector3 smoothedPosition = Vector3.Lerp(transform.position, desiredPosition, smoothSpeed);
-        transform.position = smoothedPosition;
-
-        // Змінюємо орієнтацію камери
-        transform.rotation = Quaternion.Euler(rotationOffset);
-
-        // Направляємо камеру на ГГ
-        transform.LookAt(target);
-    }
-*/
-  
-    public Transform player; // Гравець, до якого прикріплена камера
-    public float cameraDistance = 5f; // Відстань від камери до гравця
-    public float cameraHeight = 2f; // Висота камери над гравцем
-    public float rotationSpeed = 10f; // Швидкість обертання камери
-
-    private Camera mainCamera;
+    private float rotationX = 0f;
+    private float rotationY = 0f;
+    private float smoothRotationX = 0f;
+    private float smoothRotationY = 0f;
+    public float smoothTime = 0.1f; // Час згладжування
 
     void Start()
     {
-        mainCamera = Camera.main;
+        Cursor.lockState = CursorLockMode.Locked; // Закріплюємо курсор у центрі екрану
     }
 
     void Update()
     {
-        // Отримуємо положення миші у світових координатах
-        Vector3 mousePosition = mainCamera.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, mainCamera.transform.position.y));
-        
-        // Визначаємо вектор, що вказує на мишу відносно положення гравця
-        Vector3 direction = (mousePosition - player.position).normalized;
+        // Отримуємо зміщення миші за віссю X та Y
+        float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
+        float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
 
-        // Визначаємо положення камери ззаду та зверху гравця
-        Vector3 cameraPosition = player.position - direction * cameraDistance + Vector3.up * cameraHeight;
-        
-        // Повертаємо камеру в напрямку миші з плавним обертанням
-        Quaternion lookRotation = Quaternion.LookRotation(player.position - cameraPosition);
-        transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * rotationSpeed);
+        // Рахуємо обертання камери згладженим шляхом
+        smoothRotationX = Mathf.Lerp(smoothRotationX, mouseX, smoothTime);
+        smoothRotationY = Mathf.Lerp(smoothRotationY, mouseY, smoothTime);
 
-        // Зміщуємо камеру до визначеної позиції
-        transform.position = cameraPosition;
+        // Додаємо обертання
+        rotationX -= smoothRotationY;
+        rotationY += smoothRotationX;
+
+        // Обмежуємо обертання по вертикалі
+        rotationX = Mathf.Clamp(rotationX, minYAngle, maxYAngle);
+        rotationY = Mathf.Clamp(rotationY, minXAngle, maxXAngle);
+
+        // Застосовуємо обертання камери
+        transform.localRotation = Quaternion.Euler(rotationX, rotationY, 0f);
     }
 }
