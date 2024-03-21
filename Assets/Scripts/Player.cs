@@ -19,8 +19,9 @@ public class Player : MonoBehaviour
         }
         if (Input.GetKey(KeyCode.S))
         {
-            playerRigid.velocity = Time.deltaTime * w_speed * -transform.forward;
+            playerRigid.velocity = Time.deltaTime * wb_speed * -transform.forward;
         }
+
     }
     void Update()
     {
@@ -46,6 +47,7 @@ public class Player : MonoBehaviour
             playerAnim.ResetTrigger("walkback");
             playerAnim.SetTrigger("idle");
         }
+
         if (Input.GetKey(KeyCode.A))
         {
             playerTrans.Rotate(Vector3.up, -ro_speed * Time.deltaTime);
@@ -54,6 +56,11 @@ public class Player : MonoBehaviour
         {
             playerTrans.Rotate(Vector3.up, ro_speed * Time.deltaTime);
         }
+        /*if (Input.GetKey(KeyCode.Space))
+        {
+            playerAnim.SetTrigger("jump");
+            playerAnim.SetTrigger("idle");
+        }*/
 
 
         if (walking)
@@ -69,7 +76,12 @@ public class Player : MonoBehaviour
                 w_speed = olw_speed;
                 playerAnim.ResetTrigger("run");
                 playerAnim.SetTrigger("walk");
-            }
+            } 
+            /*if (Input.GetKeyDown(KeyCode.Space))
+            {
+                playerAnim.ResetTrigger("jump");
+                playerAnim.SetTrigger("walk");
+            }*/
         }
     }
 }
