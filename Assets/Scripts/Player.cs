@@ -7,7 +7,7 @@ public class Player : MonoBehaviour
 {
     public Animator playerAnim;
     public Rigidbody playerRigid;
-    public float w_speed, wb_speed, olw_speed, rn_speed, ro_speed;
+    public float w_speed, wb_speed, olw_speed, rn_speed, ro_speed, j_speed;
     public bool walking;
     public Transform playerTrans;
 
@@ -20,6 +20,10 @@ public class Player : MonoBehaviour
         if (Input.GetKey(KeyCode.S))
         {
             playerRigid.velocity = Time.deltaTime * wb_speed * -transform.forward;
+        }
+        if (Input.GetKey(KeyCode.Space))
+        {
+            playerRigid.velocity = Time.deltaTime * w_speed * transform.up;
         }
 
     }
@@ -56,12 +60,16 @@ public class Player : MonoBehaviour
         {
             playerTrans.Rotate(Vector3.up, ro_speed * Time.deltaTime);
         }
-        /*if (Input.GetKey(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space))
         {
             playerAnim.SetTrigger("jump");
+            playerAnim.ResetTrigger("idle");
+        }
+        if (Input.GetKeyUp(KeyCode.Space))
+        {
+            playerAnim.ResetTrigger("jump");
             playerAnim.SetTrigger("idle");
-        }*/
-
+        }
 
         if (walking)
         {
@@ -77,11 +85,19 @@ public class Player : MonoBehaviour
                 playerAnim.ResetTrigger("run");
                 playerAnim.SetTrigger("walk");
             } 
-            /*if (Input.GetKeyDown(KeyCode.Space))
+            if (Input.GetKeyDown(KeyCode.Space))
             {
-                playerAnim.ResetTrigger("jump");
+                w_speed += j_speed;
+                playerAnim.SetTrigger("jump");
+                playerAnim.ResetTrigger("walk");
+            }
+            if (Input.GetKeyUp(KeyCode.Space))
+            {
+                w_speed = olw_speed;
                 playerAnim.SetTrigger("walk");
-            }*/
+                playerAnim.ResetTrigger("jump");
+            }
         }
+        
     }
 }
