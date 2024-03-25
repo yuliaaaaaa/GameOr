@@ -1,5 +1,3 @@
-using System;
-using UnityEditor.Rendering;
 using UnityEngine;
 
 public class DayAndNight : MonoBehaviour
@@ -8,24 +6,25 @@ public class DayAndNight : MonoBehaviour
     private int previousRotation;
     public float degPerSec = 6;
     public Material skyBox;
-    private float rotationShader = 0;
-    private float xposureShader = 0.21f;
+    private float rotationShader;
+    private float xposureShader = 0.21f;//0.6550002f;
     public float rotationSkySpeed = 10;
+    public float rotateXPosition;
+    private int coppyAndChack;
 
     private void Start()
     {
-        skyBox.SetFloat("_Exposure", xposureShader);
+       //skyBox.SetFloat("_Exposure", xposureShader);
+       //rotation.x = 450;
     }
 
     void Update()
     {
-        if (rotation.x > 630)
+        if (previousRotation == 270)
         {
-            rotation.x = 270;
             xposureShader = 0.21f;
         }
         rotation.x = degPerSec * Time.deltaTime;
-        previousRotation = Mathf.RoundToInt(rotation.x);
         transform.Rotate(rotation, Space.World);
         if (rotationShader < 360)
         {
@@ -36,17 +35,26 @@ public class DayAndNight : MonoBehaviour
             rotationShader = 0;
         }
 
-        if (previousRotation - rotation.x <= 0)
+        rotateXPosition = transform.rotation.eulerAngles.x;
+        previousRotation = Mathf.RoundToInt(rotateXPosition);
+        Debug.Log(rotateXPosition);
+        Debug.Log(previousRotation);
+
+        if (previousRotation - coppyAndChack == 1)
         {
-            if (rotation.x > 270 & rotation.x < 450)
+            if (rotateXPosition < 90 && rotateXPosition < 0 || rotateXPosition > 270 && rotateXPosition < 360)
             {
                 xposureShader += 0.00727778f;
             }
-            if (rotation.x > 450)
+            else if (rotateXPosition > 90 && rotateXPosition < 270)
             {
                 xposureShader -= 0.00727778f;
             }
+            
+            
         }
+
+        coppyAndChack = previousRotation;
         skyBox.SetFloat("_Rotation", rotationShader);
         skyBox.SetFloat("_Exposure", xposureShader);
     }
