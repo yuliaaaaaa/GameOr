@@ -46,6 +46,7 @@ public class PickUpBehavior : MonoBehaviour
         StartCoroutine(DestroyObjectAfterDelay(1f));
         playerAnim.SetTrigger("pickup");
         playerAnim.SetTrigger("idle");
+        outlineCheck = false;
     }
     
     private IEnumerator DestroyObjectAfterDelay(float delay)
